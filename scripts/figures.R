@@ -201,9 +201,10 @@ ggplot(all_results, aes(x = time, y = freq, color = factor(run))) +
 ##########################################
 
 # Build a data.frame of x, y and all b‐values
+# Content adoption curves
 df <- tibble(x = 1:100) %>%
   mutate(x_scaled = x/100, y = 100 - x) %>%
-  crossing(b = seq(0.2, 1.4, by = 0.2)) %>%
+  crossing(b = seq(0.2, 1.2, by = 0.2)) %>%
   mutate(p = x*(1 + b) / (x*(1 + b) + y))
 
 df_neutral <- tibble(x_scaled = seq(0, 1, length.out = 100), 
@@ -219,7 +220,7 @@ content_plot <- ggplot(df, aes(x = x_scaled, y = p, color = as.factor(b))) +
   scale_x_continuous(limits = c(0, 1)) +
   scale_color_viridis_d(name = "b") +
   labs(x = "Frequency of Variant",
-       y = "Adoption probability (p)") +
+       y = "Adoption probability") +
   theme_minimal(base_size = 14) +
   theme(legend.position = "top",
         axis.title = element_text(size = 18),
@@ -232,9 +233,10 @@ content_plot <- ggplot(df, aes(x = x_scaled, y = p, color = as.factor(b))) +
 ############## FIGURE 3b #################
 ##########################################
 
+# Conformist adoption curves
 dff <- tibble(x = 1:100) %>%
   mutate(x_scaled = x/100, y = 100 - x) %>%
-  crossing(b = seq(-1, 1.4, by = 0.2)) %>%
+  crossing(b = seq(0.2, 1.2, by = 0.2)) %>%
   mutate(p = x^(1 + b) / ( x^(1 + b) + y ))
 
 # Separate neutral for dashed line
@@ -248,11 +250,11 @@ conformist_plot <- ggplot(dff, aes(x = x_scaled, y = p, color = as.factor(b))) +
   geom_line(data = df_neutral, aes(x = x_scaled, y = p),
             linetype = "dashed", color = "black", size = 1) +
   # scales & labels
-  scale_color_viridis_d(name = "Conformist bias (c)",
+  scale_color_viridis_d(name = "c",
                         option = "D") +
   labs(
     x = "Frequency of variant",
-    y = "Probability of adoption") +
+    y = "Adoption probability") +
   theme_minimal(base_size = 14) +
   theme(
     axis.title = element_text(size = 18),
@@ -262,4 +264,12 @@ conformist_plot <- ggplot(dff, aes(x = x_scaled, y = p, color = as.factor(b))) +
     legend.position  = "top"
   )
 
-grid.arrange(content_plot, conformist_plot, ncol = 2)
+
+# Arrange both plots into a single one
+
+library(patchwork)
+
+prob_adopt <- content_plot + conformist_plot +
+  plot_layout(axes = "collect", # remove duplicate axis tick labels
+              axis_titles = "collect") # merge identical axis titles into one
+prob_adopt
