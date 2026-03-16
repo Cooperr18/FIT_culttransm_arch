@@ -273,3 +273,145 @@ prob_adopt <- content_plot + conformist_plot +
   plot_layout(axes = "collect", # remove duplicate axis tick labels
               axis_titles = "collect") # merge identical axis titles into one
 prob_adopt
+
+
+##########################################
+############## FIGURE 4 ##################
+##########################################
+
+neutral_ta_fig <- function(N, mu, burnin, timesteps, n_variants = 2, n_runs,
+                           time_window = 20) {
+  
+  all_runs <- vector("list", n_runs)
+  all_runs_raw <- vector("list", n_runs)  # storage for raw trajectories
+  
+  for (run in 1:n_runs) {
+    ini <- 1:n_variants # initial variants
+    traitmatrix <- matrix(NA, nrow = timesteps, ncol = N)
+    raw_rows <- vector("list", timesteps)  # storage for raw timestep rows
+    
+    # Create initial population with EXACT equal frequencies
+    pop <- rep(ini, each = N/n_variants)[1:N] # Perfect 0.5 each
+    
+    # Burn-in stage - no recording
+    for(i in 1:burnin) {
+      # Neutral transmission with frequency correction
+      current_freqs <- tabulate(pop, nbins = n_variants)/N
+      weights <- (1/current_freqs)[pop] # Inverse frequency weighting
+      pop <- sample(pop, size = N, replace = TRUE, prob = weights)
+      
+      # Innovation with equal probability for all variants
+      innovate <- which(runif(N) < mu)
+      if(length(innovate) > 0) {
+        pop[innovate] <- sample(ini, length(innovate), 
+                                replace = TRUE, 
+                                prob = rep(0.5, n_variants))
+      }
+    }
+    
+    # Observation period after equilibrium
+    for (t in 2:timesteps) {
+      # Frequency-corrected sampling
+      current_freqs <- tabulate(pop, nbins = n_variants)/N
+      weights <- (1/current_freqs)[pop]
+      pop <- sample(pop, size = N, replace = TRUE, prob = weights)
+      
+      # Balanced innovation
+      innovate <- which(runif(N) < mu)
+      if(length(innovate) > 0) {
+        pop[innovate] <- sample(ini, length(innovate), 
+                                replace = TRUE,
+                                prob = rep(0.5, n_variants))
+      }
+      
+      traitmatrix[t,] <- pop # record the variants
+      
+      # Record raw frequency at each timestep
+      tab <- tabulate(pop, nbins = n_variants) / N
+      raw_rows[[t]] <- data.frame(
+        timestep = t,
+        run      = run,
+        variant  = as.character(ini),
+        frequency = tab
+      )
+    }
+    
+    # Collapse raw rows into a single data frame for this run
+    all_runs_raw[[run]] <- bind_rows(raw_rows)
+    
+    # Time averaging step
+    n_bins <- floor(timesteps / time_window)
+    bin_labels <- 1:n_bins  # Integer bin numbers
+    
+    averaged_samples <- lapply(seq_len(n_bins), function(j) {
+      rows <- ((j - 1) * time_window + 1):(j * time_window)
+      as.vector(traitmatrix[rows, ])
+    })
+    
+    unique_variants <- sort(unique(unlist(averaged_samples)))
+    freq_mat <- t(sapply(averaged_samples, function(x) {
+      tab <- table(factor(x, levels = ini))  # Track only original variants
+      as.numeric(tab) / (N * time_window)
+    }))
+    colnames(freq_mat) <- as.character(ini)
+    
+    # Convert to long format with integer bins
+    df_long <- as.data.frame(freq_mat) %>%
+      mutate(bin = bin_labels,  # Use integer sequence
+             run = run) %>%
+      pivot_longer(cols = -c(bin, run),
+                   names_to = "variant",
+                   values_to = "frequency")
+    
+    all_runs[[run]] <- df_long
+  }
+  
+  # Return a named list with both data frames
+  list(
+    binned = bind_rows(all_runs),
+    raw    = bind_rows(all_runs_raw)
+  )
+}
+
+neutral_ta_traj <- neutral_ta_fig(N = 100, mu = 0.05, burnin = 200,
+                                  timesteps = 200, 
+                                  n_runs = 1, time_window = 20)
+
+time_averaging <- ggplot() +
+  # Grey/white bin rectangles behind the lines
+  geom_rect(data = data.frame(
+    xmin = seq(1, floor(max(neutral_ta_traj$raw$timestep) / 20) * 20, by = 20),
+    xmax = seq(20, floor(max(neutral_ta_traj$raw$timestep) / 20) * 20, by = 20)
+  ) %>% 
+    mutate(fill = rep(c("grey90", "white"), length.out = n())),
+    aes(xmin = xmin, xmax = xmax, ymin = 0.3, ymax = 0.7, fill = fill),
+    inherit.aes = FALSE) +
+  scale_fill_identity() +
+  # Raw timestep trajectories
+  geom_line(data = neutral_ta_traj$raw,
+            aes(x = timestep, y = frequency, group = interaction(variant, run),
+                colour = "Snapshot"),
+            linewidth = 0.6) +
+  # Smoothed binned trajectories overlaid
+  geom_line(data = neutral_ta_traj$binned %>%
+              mutate(timestep = (bin - 0.5) * 20),  # map bin to midpoint
+            aes(x = timestep, y = frequency, group = interaction(variant, run),
+                colour = "Time averaged"),
+            linewidth = 1.4) +  # thicker 
+  scale_colour_manual(values = c("Snapshot" = "black", 
+                                 "Time averaged" = "steelblue"),
+                      name = NULL) + 
+  scale_x_continuous(breaks = scales::pretty_breaks(),
+                     labels = scales::number_format(accuracy = 1)) +
+  ylim(c(0.3, 0.7)) +
+  theme_minimal() +
+  theme(axis.title = element_text(size = 18),
+        strip.text = element_text(size = 16),
+        axis.text = element_text(size = 18),
+        legend.text = element_text(size = 16),
+        legend.position = "top") +
+  labs(x = "Time steps (t)", y = "Frequency") + 
+  facet_wrap(~ variant, ncol = 2)
+
+time_averaging
+
