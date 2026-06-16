@@ -419,3 +419,13 @@ time_averaging
 ############## FIGURE 5 ##################
 ##########################################
 
+
+# 1) We first create the column name map
+
+# We assign a name to each of the components of the ouput from our datasets
+
+col_SSR <- "SSR"
+
+col_NA <- "%NA"
+
+
