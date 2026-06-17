@@ -531,14 +531,14 @@ conf_snap_c <- list(
 
 # t
 conf_snap_t <- list(
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=10, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=150, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=200, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=250, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=300, p_value_lvl=0.05, n_runs=1000),
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=350, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=10, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=150, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=200, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=250, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=300, p_value_lvl=0.05, n_runs=1000),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=350, p_value_lvl=0.05, n_runs=1000),
   list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000)
 )
 
@@ -549,11 +549,11 @@ conf_snap_t <- list(
 conf_snap_N_results <- map_dfr(conf_snap_N, ~ {
   sim <- do.call(conformist_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c = .x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
-         "α" = .x$p_value_lvl,
+         alpha = .x$p_value_lvl,
          SSR = sim$SSR,
          FNR = sim$FNR,
          proportionNA = sim$proportionNA,
@@ -615,6 +615,7 @@ conf_snap_t_results <- map_dfr(conf_snap_t, ~ {
 })
 write_xlsx(conf_snap_t_results, "data/conf_snap_output/conf_snap_t.xlsx") # t
 
+
 # CONFORMIST BIAS TIME AVERAGING -----------------------------------------------
 
 # N
@@ -664,28 +665,29 @@ conf_ta_c <- list(
 
 # t
 conf_ta_t <- list(
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.05, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=10, p_value_lvl=0.05, n_runs=1000, time_window = 5),
   list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.15, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.2, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.25, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.3, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.35, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
-  list(N=100, mu=0.01, c =0.4, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5)
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=150, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=200, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=250, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=300, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=350, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 5)
 )
 
 # tw
 conf_ta_tw <- list(
-  list(N=100, mu=0.01, c =0.01, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.05, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.15, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.2, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.25, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.4, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  list(N=100, mu=0.01, c =0.4, burnin=1000, timesteps=400, p_value_lvl=0.05, n_runs=1000, time_window = 40),
-  
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 1),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 10),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 25),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 1),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000, time_window = 2),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000, time_window = 5),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000, time_window = 10),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000, time_window = 25),
+  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=100, p_value_lvl=0.05, n_runs=1000, time_window = 50)
 )
 
 
