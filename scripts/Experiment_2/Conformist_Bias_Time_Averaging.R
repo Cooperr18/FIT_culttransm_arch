@@ -101,9 +101,14 @@ conformist_bias_ta <- function(N, mu, c, burnin, timesteps,
       for (j in seq_len(averaged_rows)) {
         start <- (j - 1) * time_window + 1
         end <- j * time_window
-        # Flatten all traits in the time window into one vector
-        averaged_samples[[j]] <- as.vector(traitmatrix[start:end, ])
+        # strips out any NA values before storing the window
+        averaged_samples[[j]] <- as.vector(na.omit(as.vector(traitmatrix[start:end, ])))
       }
+      
+      # remove any time windows that ended up completely empty after NA removal
+      averaged_samples <- Filter(function(x) length(x) > 0, averaged_samples)
+      # recount how many usable windows remain after the cleanup above
+      averaged_rows <- length(averaged_samples)
       
       # Build frequency matrix
       unique_variants <- sort(unique(unlist(averaged_samples))) # store unique variants across all bins
@@ -144,6 +149,11 @@ conformist_bias_ta <- function(N, mu, c, burnin, timesteps,
               fit(time = df$time, v = df$freq)$fit_p,
               error = function(e) NA_real_
             )
+            
+            # Treat NaN the same as NA — FIT returns NaN when the
+            # frequency trajectory is too flat to compute a valid statistic
+            if (!is.na(pval) && is.nan(pval)) pval <- NA_real_
+            
             # classify immediately
             sig_flag <- if (is.na(pval)) {
               "NA"
@@ -179,6 +189,9 @@ conformist_bias_ta <- function(N, mu, c, burnin, timesteps,
     if (is.null(p_value) || length(p_value) == 0) {
       p_value <- NA_real_
     }
+    
+    # Coerce NaN to NA before the case_when, same reason as above
+    if (!is.na(p_value) && is.nan(p_value)) p_value <- NA_real_
     
     # assign inference
     inf <- case_when(
