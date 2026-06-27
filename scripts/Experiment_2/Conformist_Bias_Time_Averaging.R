@@ -111,12 +111,15 @@ conformist_bias_ta <- function(N, mu, c, burnin, timesteps,
       averaged_rows <- length(averaged_samples)
       
       # Build frequency matrix
-      unique_variants <- sort(unique(unlist(averaged_samples))) # store unique variants across all bins
-      freq_mat <- t(sapply(averaged_samples, function(variants) {
+      unique_variants <- sort(unique(unlist(averaged_samples)))  # store unique variants across all bins
+      
+      # Use lapply + rbind to prevent dimensional collapsing
+      freq_list <- lapply(averaged_samples, function(variants) {
         tab <- table(factor(variants, levels = unique_variants))
         as.numeric(tab) / length(variants)  # Proportions relative to pool of variants
-      }))
-      colnames(freq_mat) <- unique_variants
+      })
+      freq_mat <- do.call(rbind, freq_list)
+      colnames(freq_mat) <- as.character(unique_variants)
       
       # Prepare FIT input
       freq_long <- as.data.frame(freq_mat) %>%

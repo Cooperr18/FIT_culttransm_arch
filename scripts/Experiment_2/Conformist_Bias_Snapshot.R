@@ -95,11 +95,14 @@ conformist_bias_snapshot <- function(N, mu, c, burnin, timesteps,
     
     # Build count matrix
     unique_variants <- sort(unique(as.vector(traitmatrix)))
-    freq_mat <- t(apply(traitmatrix, 1, function(row) {
-      tab <- table(factor(row, levels = unique_variants))
-      as.numeric(tab) / N # counts to frequencies
-    }))
-    colnames(freq_mat) <- as.character(unique_variants) # give names
+    
+    # Use lapply + rbind to prevent dimensional collapsing
+    freq_list <- lapply(seq_len(nrow(traitmatrix)), function(i) {
+      tab <- table(factor(traitmatrix[i, ], levels = unique_variants))
+      as.numeric(tab) / N
+    })
+    freq_mat <- do.call(rbind, freq_list)
+    colnames(freq_mat) <- as.character(unique_variants) # fill the matrix with every unique variant
     
     # Prepare FIT input
     freq_long <- as_tibble(freq_mat) %>%
