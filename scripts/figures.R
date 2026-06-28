@@ -6,13 +6,13 @@
 # INITIALIZE PACKAGES
 
 pkgs <- c(
-  "dplyr","ggplot2",
+  "pak","dplyr","ggplot2",
   "tidyr","gridExtra","purrr",
   "tibble","writexl", "tidyverse",
   "viridis", "stringr", "viridisLite",
   "readxl", "patchwork", "scales"
 )
-lapply(pkgs, library, character.only = TRUE)
+lapply(pkgs, library, character.only = TRUE)  # load all packages at once
 
 library(pak) # To install package from GitHub repo
 
@@ -418,6 +418,39 @@ time_averaging
 ##########################################
 ############## FIGURE 5 ##################
 ##########################################
+
+###### CONTENT BIASED TRANSMISSION #######
+
+# import data
+cb_snap_N_df <- read_excel("data/cb_snap_output/cb_snap_N_params.xlsx")
+
+cb_ta_N_df <- read_excel("data/cb_ta_output/cb_ta_N_params.xlsx")
+
+cb_N_df <- tibble(        # create a tibble merging SSR results from snapshot and time averaging
+  N = cb_snap_N_df$N,
+  SSR_snap = cb_snap_N_df$SSR,
+  propNA_snap = cb_snap_N_df$proportionNA,
+  SSR_ta = cb_ta_N_df$SSR,
+  propNA_ta = cb_ta_N_df$proportionNA
+  )
+content_bias <- cb_N_df
+    
+## If we wanted to add or modify columns from the tibble, we would have to use mutate()
+## following the same arguments ("name of the column" = df$col, etc.)
+
+# We repeat this step for each parameter to compare side_by_side snapshot and time averaging
+# and then create a function to plot
+
+plot_data <- function(content_bias) {
+  ggplot(content_bias, aes(y=SSR, x=N)) +
+    geom_line() +
+    geom_point() +
+    theme_bw() +
+    labs(x="N",y="SSR")
+}
+
+plot_data(content_bias)
+
 
 
 

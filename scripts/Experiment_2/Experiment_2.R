@@ -8,7 +8,7 @@ pkgs <- c(
   "tidyr","purrr",
   "tibble","writexl"
 )
-lapply(pkgs, library, character.only = TRUE)
+lapply(pkgs, library, character.only = TRUE)  # load all packages at once
 
 # Install signatselect
 pak::pkg_install("benmarwick/signatselect")
