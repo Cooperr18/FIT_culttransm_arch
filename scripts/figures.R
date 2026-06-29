@@ -421,7 +421,10 @@ time_averaging
 
 ###### CONTENT BIASED TRANSMISSION #######
 
-# import data
+###### 5a: SSR values across varying parameters (OFAT) ######
+
+# Import data
+#### N ####
 cb_snap_N_df <- read_excel("data/cb_snap_output/cb_snap_N_params.xlsx")
 
 cb_ta_N_df <- read_excel("data/cb_ta_output/cb_ta_N_params.xlsx")
@@ -432,25 +435,124 @@ cb_N_df <- tibble(        # create a tibble merging SSR results from snapshot an
   propNA_snap = cb_snap_N_df$proportionNA,
   SSR_ta = cb_ta_N_df$SSR,
   propNA_ta = cb_ta_N_df$proportionNA
-  )
-content_bias <- cb_N_df
-    
+)
+
 ## If we wanted to add or modify columns from the tibble, we would have to use mutate()
 ## following the same arguments ("name of the column" = df$col, etc.)
 
 # We repeat this step for each parameter to compare side_by_side snapshot and time averaging
-# and then create a function to plot
 
-plot_data <- function(content_bias) {
-  ggplot(content_bias, aes(y=SSR, x=N)) +
-    geom_line() +
-    geom_point() +
-    theme_bw() +
-    labs(x="N",y="SSR")
+#### Mu ####
+cb_snap_mu_df <- read_excel("data/cb_snap_output/cb_snap_mu_params.xlsx")
+
+cb_ta_mu_df <- read_excel("data/cb_ta_output/cb_ta_mu_params.xlsx")
+
+cb_mu_df <- tibble(
+  mu = cb_snap_mu_df$mu,
+  SSR_snap = cb_snap_mu_df$SSR,
+  propNA_snap = cb_snap_mu_df$proportionNA,
+  SSR_ta =cb_ta_mu_df$SSR,
+  propNA_ta = cb_ta_mu_df$proportionNA
+)
+
+
+#### t ####
+cb_snap_t_df <- read_excel("data/cb_snap_output/cb_snap_time_params.xlsx")
+
+cb_ta_t_df <- read_excel("data/cb_ta_output/cb_ta_time_params.xlsx")
+
+cb_t_df <- tibble(
+  t = cb_snap_t_df$`Time steps`,
+  SSR_snap = cb_snap_t_df$SSR,
+  propNA_snap = cb_snap_t_df$proportionNA,
+  w = cb_ta_t_df$w,
+  SSR_ta = cb_ta_t_df$SSR,
+  propNA_ta = cb_ta_t_df$proportionNA
+)
+
+
+#### b ####
+cb_snap_b_df <- read_excel("data/cb_snap_output/cb_snap_b_params.xlsx")
+
+cb_ta_b_df <- read_excel("data/cb_ta_output/cb_ta_b_params.xlsx")
+
+cb_b_df <- tibble(
+  b = cb_snap_b_df$b,
+  SSR_snap = cb_snap_b_df$SSR,
+  propNA_snap = cb_snap_b_df$proportionNA,
+  SSR_ta = cb_ta_b_df$SSR,
+  propNA_ta = cb_ta_b_df$proportionNA
+)
+
+
+# to plot the results side by side and by parameters
+# we first combine all tibles into a long dataframe
+combined_cb_df <- bind_rows(
+  cb_N_df %>% rename(param_value = N) %>% mutate(parameter = "N"),
+  cb_mu_df %>% rename(param_value = mu) %>% mutate(parameter = "mu"),
+  cb_t_df %>% rename(param_value = t) %>% mutate(parameter = "t"),
+  cb_b_df %>% rename(param_value = b) %>% mutate(parameter = "b")
+  ) %>%                             # and we turn it into long format
+  pivot_longer(
+    cols = c(SSR_snap, SSR_ta),     # everything should be structured around these two fields
+    names_to = "SSR_type",
+    values_to = "SSR_values"
+  )
+
+# and plot the results using a function (so we can plot conformist biased more rapidly)
+plot_SSR <- function(df) {
+  ggplot(df, aes(x=param_value, y=SSR_values, color=SSR_type)) +
+    geom_line(linewidth = 1.75) +
+    geom_point(size = 2.75) +
+    theme_minimal() +
+    labs(x="Parameter value",y="SSR",color="Time structure") +
+    scale_color_manual(
+      labels = c("SSR_snap"= "Snapshot", "SSR_ta"="Time averaging"),
+      values = c("SSR_snap"="#4682B4", "SSR_ta"="#E69F00")) +
+    facet_wrap(~ parameter, scales="free_x") +
+    theme(axis.title = element_text(size = 22),
+          strip.text = element_text(size = 22),
+          axis.text = element_text(size = 18),
+          legend.title = element_text(size = 22),
+          legend.text = element_text(size = 20))
 }
 
-plot_data(content_bias)
+plot_SSR(combined_cb_df)
 
 
+###### 5b: %NA values across varying parameters (OFAT) ######
+
+# Now instead of using SSR as the guiding field to our long format
+# we specify %NA as our reference
+
+combined_cb_df <- bind_rows(            # repeat the same procedure
+  cb_N_df %>% rename(param_value = N) %>% mutate(parameter = "N"),
+  cb_mu_df %>% rename(param_value = mu) %>% mutate(parameter = "mu"),
+  cb_t_df %>% rename(param_value = t) %>% mutate(parameter = "t"),
+  cb_b_df %>% rename(param_value = b) %>% mutate(parameter = "b")
+  ) %>%                                 # and we turn it into long format
+  pivot_longer(
+    cols = c(propNA_snap, propNA_ta),   # now we structure around %NA instead of SSR
+    names_to = "propNA_type",
+    values_to = "propNA_values"
+)
+
+plot_NA <- function(df) {
+  ggplot(df, aes(x=as.factor(param_value), y=propNA_values, fill=propNA_type)) +
+    geom_col(position = position_dodge(preserve = "single")) +
+    theme_minimal() +
+    labs(x="Parameter value", y="%NA", fill="Time structure") +
+    scale_fill_manual(
+      labels = c("propNA_snap"="Snapshot", "propNA_ta"="Time averaging"),
+      values = c("propNA_snap"="#4682B4", "propNA_ta"="#E69F00")) +
+    facet_wrap(~ parameter, scales="free_x") +
+    theme(axis.title = element_text(size = 22),
+          strip.text = element_text(size = 22),
+          axis.text = element_text(size = 18),
+          legend.title = element_text(size = 22),
+          legend.text = element_text(size = 20))
+}
+
+plot_NA(combined_cb_df)
 
 
