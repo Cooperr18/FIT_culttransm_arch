@@ -419,9 +419,11 @@ time_averaging
 ############## FIGURE 5 ##################
 ##########################################
 
+##########################################
 ###### CONTENT BIASED TRANSMISSION #######
-
-###### 5a: SSR values across varying parameters (OFAT) ######
+###### 5: SSR values across        #######
+###### varying parameters (OFAT)   #######
+##########################################
 
 # Import data
 #### N ####
@@ -485,16 +487,18 @@ cb_b_df <- tibble(
 )
 
 
-# to plot the results side by side and by parameters
-# we first combine all tibles into a long dataframe
-combined_cb_df <- bind_rows(
+# To plot the results side by side and by parameters
+# We first merge all tibbles into a long dataframe
+# with a column "param_value" that includes each parameter variation
+# and "parameter" that holds the name of the parameter which is being varied
+combined_cb_df <- bind_rows(                   
   cb_N_df %>% rename(param_value = N) %>% mutate(parameter = "N"),
   cb_mu_df %>% rename(param_value = mu) %>% mutate(parameter = "mu"),
   cb_t_df %>% rename(param_value = t) %>% mutate(parameter = "t"),
   cb_b_df %>% rename(param_value = b) %>% mutate(parameter = "b")
-  ) %>%                             # and we turn it into long format
-  pivot_longer(
-    cols = c(SSR_snap, SSR_ta),     # everything should be structured around these two fields
+  ) %>%                             
+  pivot_longer(                     # and we turn it into long format
+    cols = c(SSR_snap, SSR_ta),     # everything should be structured around these two new fields
     names_to = "SSR_type",
     values_to = "SSR_values"
   )
@@ -504,7 +508,7 @@ plot_SSR <- function(df) {
   ggplot(df, aes(x=param_value, y=SSR_values, color=SSR_type)) +
     geom_line(linewidth = 1.75) +
     geom_point(size = 2.75) +
-    theme_minimal() +
+    theme_bw() +
     labs(x="Parameter value",y="SSR",color="Time structure") +
     scale_color_manual(
       labels = c("SSR_snap"= "Snapshot", "SSR_ta"="Time averaging"),
@@ -520,7 +524,16 @@ plot_SSR <- function(df) {
 plot_SSR(combined_cb_df)
 
 
-###### 5b: %NA values across varying parameters (OFAT) ######
+
+##########################################
+############## FIGURE 6 ##################
+##########################################
+
+##########################################
+###### CONTENT BIASED TRANSMISSION #######
+###### 6: %NA values across        #######
+###### varying parameters (OFAT)   #######
+##########################################
 
 # Now instead of using SSR as the guiding field to our long format
 # we specify %NA as our reference
@@ -538,21 +551,139 @@ combined_cb_df <- bind_rows(            # repeat the same procedure
 )
 
 plot_NA <- function(df) {
-  ggplot(df, aes(x=as.factor(param_value), y=propNA_values, fill=propNA_type)) +
-    geom_col(position = position_dodge(preserve = "single")) +
-    theme_minimal() +
+  ggplot(df, aes(x=as.factor(param_value), y=propNA_values, fill=propNA_type)) +   # as.factor() to recognise numbers
+    geom_col(position = position_dodge(preserve = "single")) +                     # as characters (easier for barplot)
+    theme_bw() +
     labs(x="Parameter value", y="%NA", fill="Time structure") +
     scale_fill_manual(
-      labels = c("propNA_snap"="Snapshot", "propNA_ta"="Time averaging"),
+      labels = c("propNA_snap"="Snapshot", "propNA_ta"="Time averaging"),   # manually assign legend text
       values = c("propNA_snap"="#4682B4", "propNA_ta"="#E69F00")) +
     facet_wrap(~ parameter, scales="free_x") +
     theme(axis.title = element_text(size = 22),
           strip.text = element_text(size = 22),
-          axis.text = element_text(size = 18),
+          axis.text = element_text(size = 16),
           legend.title = element_text(size = 22),
           legend.text = element_text(size = 20))
 }
 
 plot_NA(combined_cb_df)
 
+
+
+##########################################
+############## FIGURE 7 ##################
+##########################################
+
+##########################################
+##### CONFORMIST BIASED TRANSMISSION #####
+###### 7: SSR values across          #####
+###### varying parameters (OFAT)     #####
+##########################################
+
+# Import data
+#### N ####
+conf_snap_N_df <- read_excel("data/conf_snap_output/conf_snap_N.xlsx")
+
+conf_ta_N_df <- read_excel("data/conf_ta_output/conf_ta_N.xlsx")
+
+conf_N_df <- tibble(        # create a tibble merging SSR results from snapshot and time averaging
+  N = conf_snap_N_df$N,
+  SSR_snap = conf_snap_N_df$SSR,
+  propNA_snap = conf_snap_N_df$proportionNA,
+  SSR_ta = conf_ta_N_df$SSR,
+  propNA_ta = conf_ta_N_df$proportionNA
+)
+
+## If we wanted to add or modify columns from the tibble, we would have to use mutate()
+## following the same arguments ("name of the column" = df$col, etc.)
+
+# We repeat this step for each parameter to compare side-by-side snapshot and time averaging
+
+#### Mu ####
+conf_snap_mu_df <- read_excel("data/conf_snap_output/conf_snap_mu.xlsx")
+
+conf_ta_mu_df <- read_excel("data/conf_ta_output/conf_ta_mu.xlsx")
+
+conf_mu_df <- tibble(
+  mu = conf_snap_mu_df$mu,
+  SSR_snap = conf_snap_mu_df$SSR,
+  propNA_snap = conf_snap_mu_df$proportionNA,
+  SSR_ta =conf_ta_mu_df$SSR,
+  propNA_ta = conf_ta_mu_df$proportionNA
+)
+
+
+#### t ####
+conf_snap_t_df <- read_excel("data/conf_snap_output/conf_snap_t.xlsx")
+
+conf_ta_t_df <- read_excel("data/conf_ta_output/conf_ta_t.xlsx")
+
+conf_t_df <- tibble(
+  t = conf_snap_t_df$`Time steps`,
+  SSR_snap = conf_snap_t_df$SSR,
+  propNA_snap = conf_snap_t_df$proportionNA,
+  w = conf_ta_t_df$w,
+  SSR_ta = conf_ta_t_df$SSR,
+  propNA_ta = conf_ta_t_df$proportionNA
+)
+
+
+#### c ####
+conf_snap_c_df <- read_excel("data/conf_snap_output/conf_snap_c.xlsx")
+
+conf_ta_c_df <- read_excel("data/conf_ta_output/conf_ta_c.xlsx")
+
+conf_c_df <- tibble(
+  c = conf_snap_c_df$c,
+  SSR_snap = conf_snap_c_df$SSR,
+  propNA_snap = conf_snap_c_df$proportionNA,
+  SSR_ta = conf_ta_c_df$SSR,
+  propNA_ta = conf_ta_c_df$proportionNA
+)
+
+
+# We follow the same step of merging all four tibbles into one
+# so we can plot snapshot and time averaging values all at once
+
+combined_conf_df <- bind_rows(                   
+  conf_N_df %>% rename(param_value = N) %>% mutate(parameter = "N"),
+  conf_mu_df %>% rename(param_value = mu) %>% mutate(parameter = "mu"),
+  conf_t_df %>% rename(param_value = t) %>% mutate(parameter = "t"),
+  conf_c_df %>% rename(param_value = c) %>% mutate(parameter = "c")
+) %>%                             
+  pivot_longer(                     # and we turn it into long format
+    cols = c(SSR_snap, SSR_ta),     # everything should be structured around these two new fields
+    names_to = "SSR_type",
+    values_to = "SSR_values"
+  )
+
+plot_SSR(combined_conf_df)
+
+
+##########################################
+############## FIGURE  ##################
+##########################################
+
+##########################################
+##### CONFORMIST BIASED TRANSMISSION #####
+###### 8: %NA values across          #####
+###### varying parameters (OFAT)     #####
+##########################################
+
+# Now instead of using SSR as the guiding field to our long format
+# we specify %NA as our reference
+
+combined_conf_df <- bind_rows(            # repeat the same procedure
+  conf_N_df %>% rename(param_value = N) %>% mutate(parameter = "N"),
+  conf_mu_df %>% rename(param_value = mu) %>% mutate(parameter = "mu"),
+  conf_t_df %>% rename(param_value = t) %>% mutate(parameter = "t"),
+  conf_c_df %>% rename(param_value = c) %>% mutate(parameter = "c")
+) %>%                                 
+  pivot_longer(                         # and we turn it into long format
+    cols = c(propNA_snap, propNA_ta),   # now we structure around %NA instead of SSR
+    names_to = "propNA_type",
+    values_to = "propNA_values"
+  )
+
+plot_NA(combined_conf_df)
 

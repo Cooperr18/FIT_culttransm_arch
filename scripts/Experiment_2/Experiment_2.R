@@ -135,7 +135,7 @@ cb_snap_t_b <- list(
 cb_snap_mu_results <- map_dfr(cb_snap_mu_params, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -153,7 +153,7 @@ write_xlsx(cb_snap_mu_results, "tables/cb_snap_output/cb_snap_mu_params.xlsx") #
 cb_snap_N_results <- map_dfr(cb_snap_N_params, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -171,7 +171,7 @@ write_xlsx(cb_snap_N_results, "tables/cb_snap_output/cb_snap_N_params.xlsx") # N
 cb_snap_b_results <- map_dfr(cb_snap_b_params, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -188,7 +188,7 @@ write_xlsx(cb_snap_b_results, "tables/cb_snap_output/cb_snap_b_params.xlsx") # b
 cb_snap_time_results <- map_dfr(cb_snap_time_params, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -206,7 +206,7 @@ write_xlsx(cb_snap_time_params, "tables/cb_snap_output/cb_snap_time_params.xlsx"
 cb_snap_runs_results <- map_dfr(cb_snap_runs_params, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -224,7 +224,7 @@ write_xlsx(cb_snap_runs_params, "tables/cb_snap_output/cb_snap_runs_params.xlsx"
 cb_snap_mu_b <- map_dfr(cb_snap_mu_b, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -242,7 +242,7 @@ write_xlsx(cb_snap_mu_b, "tables/cb_snap_output/int/cb_snap_mu_b.xlsx") # mu x b
 cb_snap_N_b <- map_dfr(cb_snap_N_b, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -259,7 +259,7 @@ write_xlsx(cb_snap_N_b, "tables/cb_snap_output/int/cb_snap_N_b.xlsx") # N x b
 cb_snap_t_b <- map_dfr(cb_snap_t_b, ~ {
   sim <- do.call(content_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -365,7 +365,7 @@ cb_ta_tw_params <- list(
 cb_ta_mu_results <- map_dfr(cb_ta_mu_params, ~ {
   sim <- do.call(content_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -384,7 +384,7 @@ write_xlsx(cb_ta_mu_results, "tables/cb_ta_output/cb_ta_mu_params2.xlsx") # mu
 cb_ta_N_results <- map_dfr(cb_ta_N_params, ~ {
   sim <- do.call(content_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -403,7 +403,7 @@ write_xlsx(cb_ta_N_results, "tables/cb_ta_output/cb_ta_N_params2.xlsx") # N
 cb_ta_b_results <- map_dfr(cb_ta_b_params, ~ {
   sim <- do.call(content_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -422,7 +422,7 @@ write_xlsx(cb_ta_b_results, "tables/cb_ta_output/cb_ta_b_params2.xlsx") # b
 cb_ta_time_results <- map_dfr(cb_ta_time_params, ~ {
   sim <- do.call(content_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -441,7 +441,7 @@ write_xlsx(cb_ta_time_results, "tables/cb_ta_output/cb_ta_time_params2.xlsx") # 
 cb_ta_runs_results <- map_dfr(cb_ta_runs_params, ~ {
   sim <- do.call(content_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -460,7 +460,7 @@ write_xlsx(cb_ta_runs_results, "tables/cb_ta_output/cb_ta_runs_params2.xlsx") # 
 cb_ta_tw_results <- map_dfr(cb_ta_tw_params, ~ {
   sim <- do.call(content_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          b = .x$b,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -567,7 +567,7 @@ write_xlsx(conf_snap_N_results, "data/conf_snap_output/conf_snap_N.xlsx") # N
 conf_snap_mu_results <- map_dfr(conf_snap_mu, ~ {
   sim <- do.call(conformist_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c = .x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -584,7 +584,7 @@ write_xlsx(conf_snap_mu_results, "data/conf_snap_output/conf_snap_mu.xlsx") # mu
 conf_snap_c_results <- map_dfr(conf_snap_c, ~ {
   sim <- do.call(conformist_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c = .x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -602,7 +602,7 @@ write_xlsx(conf_snap_c_results, "data/conf_snap_output/conf_snap_c.xlsx") # c
 conf_snap_t_results <- map_dfr(conf_snap_t, ~ {
   sim <- do.call(conformist_bias_snapshot, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c = .x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -715,7 +715,7 @@ conf_ta_tw <- list(
 conf_ta_N_results <- map_dfr(conf_ta_N, ~ {
   sim <- do.call(conformist_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c =.x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -732,7 +732,7 @@ write_xlsx(conf_ta_N_results, "data/conf_ta_output/conf_ta_N.xlsx") # N
 conf_ta_N_results_2 <- map_dfr(conf_ta_N_2, ~ {
   sim <- do.call(conformist_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c =.x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -751,7 +751,7 @@ write_xlsx(conf_ta_N_results_2, "data/conf_ta_output/conf_ta_N_2.xlsx") # N
 conf_ta_mu_results <- map_dfr(conf_ta_mu, ~ {
   sim <- do.call(conformist_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c =.x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -770,7 +770,7 @@ write_xlsx(conf_ta_mu_results, "data/conf_ta_output/conf_ta_mu.xlsx") # mu
 conf_ta_c_results <- map_dfr(conf_ta_c, ~ {
   sim <- do.call(conformist_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c = .x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -789,7 +789,7 @@ write_xlsx(conf_ta_c_results, "data/conf_ta_output/conf_ta_c.xlsx") # c
 conf_ta_t_results <- map_dfr(conf_ta_t, ~ {
   sim <- do.call(conformist_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c =.x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
@@ -807,7 +807,7 @@ write_xlsx(conf_ta_t_results, "data/conf_ta_output/conf_ta_t.xlsx") # t
 conf_ta_tw_results <- map_dfr(conf_ta_tw, ~ {
   sim <- do.call(conformist_bias_ta, args = .x)
   tibble(N  = .x$N,
-         "µ" = .x$mu,
+         mu = .x$mu,
          c =.x$c,
          "Burn-in" = .x$burnin,
          "Time steps" = .x$timesteps,
