@@ -397,7 +397,7 @@ time_averaging <- ggplot() +
               mutate(timestep = (bin - 0.5) * 20),  # map bin to midpoint
             aes(x = timestep, y = frequency, group = interaction(variant, run),
                 colour = "Time averaged"),
-            linewidth = 1.4) +  # thicker 
+            linewidth = 1.4) +                      # thicker 
   scale_colour_manual(values = c("Snapshot" = "black", 
                                  "Time averaged" = "steelblue"),
                       name = NULL) + 
@@ -556,7 +556,7 @@ plot_NA <- function(df) {
     theme_bw() +
     labs(x="Parameter value", y="%NA", fill="Time structure") +
     scale_fill_manual(
-      labels = c("propNA_snap"="Snapshot", "propNA_ta"="Time averaging"),   # manually assign legend text
+      labels = c("propNA_snap"="Snapshot", "propNA_ta"="Time averaging"),       # manually assign legend text
       values = c("propNA_snap"="#4682B4", "propNA_ta"="#E69F00")) +
     facet_wrap(~ parameter, scales="free_x") +
     theme(axis.title = element_text(size = 22),
@@ -661,11 +661,11 @@ plot_SSR(combined_conf_df)
 
 
 ##########################################
-############## FIGURE  ##################
+############## FIGURE 8 ##################
 ##########################################
 
 ##########################################
-##### CONFORMIST BIASED TRANSMISSION #####
+###### CONFORMIST BIASED TRANSMISSION ####
 ###### 8: %NA values across          #####
 ###### varying parameters (OFAT)     #####
 ##########################################
@@ -686,4 +686,3 @@ combined_conf_df <- bind_rows(            # repeat the same procedure
   )
 
 plot_NA(combined_conf_df)
-

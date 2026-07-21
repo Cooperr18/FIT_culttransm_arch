@@ -637,24 +637,6 @@ conf_ta_N <- list(
   list(N=1000, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5)
 )
 
-conf_ta_N_2 <- list(
-  list(N=10, mu=0.01, c =0.05, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=50, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=150, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=200, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=250, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=300, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=350, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=400, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=500, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=600, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=700, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=800, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=900, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5),
-  list(N=1000, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=250, time_window = 5)
-)
-
 # mu
 conf_ta_mu <- list(
   list(N=100, mu=0.01, c =0.1, burnin=1000, timesteps=50, p_value_lvl=0.05, n_runs=1000, time_window = 5),
@@ -728,23 +710,6 @@ conf_ta_N_results <- map_dfr(conf_ta_N, ~ {
   )
 })
 write_xlsx(conf_ta_N_results, "data/conf_ta_output/conf_ta_N.xlsx") # N
-
-conf_ta_N_results_2 <- map_dfr(conf_ta_N_2, ~ {
-  sim <- do.call(conformist_bias_ta, args = .x)
-  tibble(N  = .x$N,
-         mu = .x$mu,
-         c =.x$c,
-         "Burn-in" = .x$burnin,
-         "Time steps" = .x$timesteps,
-         "w" = .x$time_window,
-         "α" = .x$p_value_lvl,
-         SSR = sim$SSR,
-         FNR = sim$FNR,
-         proportionNA = sim$proportionNA,
-         "Runs" = .x$n_runs
-  )
-})
-write_xlsx(conf_ta_N_results_2, "data/conf_ta_output/conf_ta_N_2.xlsx") # N
 
 
 # mu
