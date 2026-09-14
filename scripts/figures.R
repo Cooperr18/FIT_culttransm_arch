@@ -14,8 +14,6 @@ pkgs <- c(
 )
 lapply(pkgs, library, character.only = TRUE)  # load all packages at once
 
-library(pak) # To install package from GitHub repo
-
 pak::pkg_install("benmarwick/signatselect") # Install SST
 library(signatselect)
 
@@ -660,7 +658,7 @@ combined_conf_df <- bind_rows(
 plot_SSR(combined_conf_df)
 
 
-##########################################
+a##########################################
 ############## FIGURE 8 ##################
 ##########################################
 
